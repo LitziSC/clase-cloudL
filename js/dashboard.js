@@ -1,19 +1,28 @@
-const SUPABASE_URL="https://erebpbsbafoluuhtymqh.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZWJwYnNiYWZvbHV1aHR5bXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDUxNTcsImV4cCI6MjA3MDA4MTE1N30.dmD72RUU4gFs3QsyuHnyLS2cJc-Pm4cVqYpKksyobZE";
-                                                                                                                                                                                                                                                            const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = "https://erebpbsbafoluuhtymqh.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZWJwYnNiYWZvbHV1aHR5bXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1MDUxNTcsImV4cCI6MjA3MDA4MTE1N30.dmD72RUU4gFs3QsyuHnyLS2cJc-Pm4cVqYpKksyobZE";
 
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ------------------------- TOAST BONITOS ------------------------- */
+function mostrarToast(mensaje, tipo = "success") {
+  const toast = document.createElement("div");
+  toast.className = "toast" + (tipo === "error" ? " error" : "");
+  toast.textContent = mensaje;
+  document.body.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 3000);
+}
+
+/* ------------------------- AGREGAR ------------------------- */
 async function agregarEstudiante() {
-  const nombre = document.getElementById("nombre").value;
-  const correo = document.getElementById("correo").value;
-  const clase = document.getElementById("clase").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const correo = document.getElementById("correo").value.trim();
+  const clase = document.getElementById("clase").value.trim();
 
-  const {
-    data: { user },
-    error: userError,
-  } = await client.auth.getUser();
+  const { data: { user }, error: userError } = await client.auth.getUser();
 
   if (userError || !user) {
-    alert("No estás autenticado.");
+    mostrarToast("No estás autenticado.", "error");
     return;
   }
 
@@ -25,78 +34,117 @@ async function agregarEstudiante() {
   });
 
   if (error) {
-    alert("Error al agregar: " + error.message);
+    mostrarToast("Error al agregar: " + error.message, "error");
   } else {
-    alert("Estudiante agregado");
+    mostrarToast("Estudiante agregado correctamente");
     cargarEstudiantes();
   }
 }
 
+/* ------------------------- CARGAR ------------------------- */
 async function cargarEstudiantes() {
   const { data, error } = await client
-    .from("estudiantes")  //Nombre de BD
+    .from("estudiantes")
     .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
-    alert("Error al cargar estudiantes: " + error.message);
+    mostrarToast("Error al cargar estudiantes: " + error.message, "error");
     return;
   }
 
   const lista = document.getElementById("lista-estudiantes");
   lista.innerHTML = "";
+
   data.forEach((est) => {
     const item = document.createElement("li");
-    item.textContent = `${est.nombre} (${est.clase})`;
+    item.innerHTML = `
+      ${est.nombre} (${est.clase})
+      <div>
+        <button class="btn-editar" onclick="editarEstudiante(${est.id}, '${est.nombre}', '${est.correo}', '${est.clase}')">✏️</button>
+        <button class="btn-eliminar" onclick="eliminarEstudiante(${est.id})">🗑️</button>
+      </div>
+    `;
     lista.appendChild(item);
   });
 }
-
 cargarEstudiantes();
 
+/* ------------------------- ELIMINAR ------------------------- */
+async function eliminarEstudiante(id) {
+  if (!confirm("¿Seguro que deseas eliminar este estudiante?")) return;
+
+  const { error } = await client.from("estudiantes").delete().eq("id", id);
+
+  if (error) {
+    mostrarToast("Error al eliminar: " + error.message, "error");
+  } else {
+    mostrarToast("Estudiante eliminado correctamente");
+    cargarEstudiantes();
+  }
+}
+
+/* ------------------------- EDITAR ------------------------- */
+function editarEstudiante(id, nombre, correo, clase) {
+  const nuevoNombre = prompt("Nuevo nombre:", nombre);
+  const nuevoCorreo = prompt("Nuevo correo:", correo);
+  const nuevaClase = prompt("Nueva clase:", clase);
+
+  if (nuevoNombre && nuevoCorreo && nuevaClase) {
+    actualizarEstudiante(id, nuevoNombre, nuevoCorreo, nuevaClase);
+  }
+}
+
+async function actualizarEstudiante(id, nombre, correo, clase) {
+  const { error } = await client
+    .from("estudiantes")
+    .update({ nombre, correo, clase })
+    .eq("id", id);
+
+  if (error) {
+    mostrarToast("Error al actualizar: " + error.message, "error");
+  } else {
+    mostrarToast("Estudiante actualizado correctamente");
+    cargarEstudiantes();
+  }
+}
+
+/* ------------------------- SUBIR ARCHIVO ------------------------- */
 async function subirArchivo() {
   const archivoInput = document.getElementById("archivo");
   const archivo = archivoInput.files[0];
 
   if (!archivo) {
-    alert("Selecciona un archivo primero.");
+    mostrarToast("Selecciona un archivo primero.", "error");
     return;
   }
 
-  const {
-    data: { user },
-    error: userError,
-  } = await client.auth.getUser();
+  const { data: { user }, error: userError } = await client.auth.getUser();
 
   if (userError || !user) {
-    alert("Sesión no válida.");
+    mostrarToast("Sesión no válida.", "error");
     return;
   }
 
-  const nombreRuta = `${user.id}/${archivo.name}`; 
-  const { data, error } = await client.storage
-    .from("tareas") //Nombre del bucket
-    .upload(nombreRuta, archivo, {
-      cacheControl: "3600",
-      upsert: false,
-    });
+  const nombreRuta = `${user.id}/${archivo.name}`;
+  const { error } = await client.storage
+    .from("tareas")
+    .upload(nombreRuta, archivo, { cacheControl: "3600", upsert: false });
 
   if (error) {
-    alert("Error al subir: " + error.message);
+    mostrarToast("Error al subir: " + error.message, "error");
   } else {
-    alert("Archivo subido correctamente.");
-    listarArchivos(); 
+    mostrarToast("Archivo subido correctamente");
+    listarArchivos();
   }
 }
 
+/* ------------------------- LISTAR ARCHIVOS ------------------------- */
 async function listarArchivos() {
-  const {
-    data: { user },
-    error: userError,
-  } = await client.auth.getUser();
+  const { data: { user }, error: userError } = await client.auth.getUser();
 
   if (userError || !user) {
-    alert("Sesión no válida.");
+    mostrarToast("Sesión no válida.", "error");
     return;
   }
 
@@ -113,34 +161,21 @@ async function listarArchivos() {
   }
 
   data.forEach(async (archivo) => {
-    const { data: signedUrlData, error: signedUrlError } = await client.storage
+    const { data: signedUrlData } = await client.storage
       .from("tareas")
-      .createSignedUrl(`${user.id}/${archivo.name}`, 60); 
-
-    if (signedUrlError) {
-      console.error("Error al generar URL firmada:", signedUrlError.message);
-      return;
-    }
+      .createSignedUrl(`${user.id}/${archivo.name}`, 60);
 
     const publicUrl = signedUrlData.signedUrl;
-
     const item = document.createElement("li");
 
-    const esImagen = archivo.name.match(/\.(jpg|jpeg|png|gif)$/i);
-    const esPDF = archivo.name.match(/\.pdf$/i);
-
-    if (esImagen) {
-      item.innerHTML = `
-        <strong>${archivo.name}</strong><br>
+    if (/\.(jpg|jpeg|png|gif)$/i.test(archivo.name)) {
+      item.innerHTML = `<strong>${archivo.name}</strong><br>
         <a href="${publicUrl}" target="_blank">
-          <img src="${publicUrl}" width="150" style="border:1px solid #ccc; margin:5px;" />
-        </a>
-      `;
-    } else if (esPDF) {
-      item.innerHTML = `
-        <strong>${archivo.name}</strong><br>
-        <a href="${publicUrl}" target="_blank">Ver PDF</a>
-      `;
+          <img src="${publicUrl}" width="150"/>
+        </a>`;
+    } else if (/\.pdf$/i.test(archivo.name)) {
+      item.innerHTML = `<strong>${archivo.name}</strong><br>
+        <a href="${publicUrl}" target="_blank">Ver PDF</a>`;
     } else {
       item.innerHTML = `<a href="${publicUrl}" target="_blank">${archivo.name}</a>`;
     }
@@ -150,14 +185,15 @@ async function listarArchivos() {
 }
 listarArchivos();
 
+/* ------------------------- CERRAR SESIÓN ------------------------- */
 async function cerrarSesion() {
   const { error } = await client.auth.signOut();
 
   if (error) {
-    alert("Error al cerrar sesión: " + error.message);
+    mostrarToast("Error al cerrar sesión: " + error.message, "error");
   } else {
     localStorage.removeItem("token");
-    alert("Sesión cerrada.");
+    mostrarToast("Sesión cerrada correctamente");
     window.location.href = "index.html";
   }
 }

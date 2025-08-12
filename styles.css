@@ -1,5 +1,6 @@
+/* Fondo general */
 body {
-  background-color: #f9f9f9;
+  background-color: #fefcfb;
   font-family: 'Segoe UI', sans-serif;
   display: flex;
   justify-content: center;
@@ -7,74 +8,128 @@ body {
   margin: 0;
 }
 
-.contenedor {
-  background-color: white;
+/* Contenedor principal */
+.container {
+  background-color: #ffffff;
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.08);
   width: 100%;
-  max-width: 600px;
+  max-width: 800px;
 }
 
-h1, h2 {
-  color: #333;
-  margin-top: 20px;
+/* Títulos */
+h1 {
+  color: #444;
   text-align: center;
+  margin-bottom: 25px;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 15px;
+h2 {
+  color: #555;
+  margin-top: 15px;
 }
 
+/* Tarjetas */
+.card {
+  background-color: #fafafa;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+}
+
+/* Inputs y selects */
 input, select {
   padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: #fefefe;
 }
 
+/* Botones */
 button {
   padding: 10px 15px;
-  background-color: #1f8ef1;
-  color: white;
+  background-color: #a3d2ca;
+  color: #2b2b2b;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  margin-top: 10px;
+  transition: background 0.3s;
 }
 
 button:hover {
-  background-color: #0c71c3;
+  background-color: #89c9b8;
 }
 
+/* Botón cerrar sesión */
 .cerrar-btn {
-  background-color: #e74c3c;
-  display: block;
-  width: 30%;
+  background-color: #f8a5a5;
+  width: auto;
 }
 
-.cerrar:hover {
-  background-color: #c0392b;
+.cerrar-btn:hover {
+  background-color: #f78a8a;
 }
 
+/* Lista */
 ul {
   list-style: none;
   padding-left: 0;
 }
 
 ul li {
-  margin: 10px 0;
-  padding: 8px;
-  background-color: #f3f3f3;
-  border-radius: 6px;
+  margin: 8px 0;
+  padding: 10px;
+  background-color: #fdf1ec;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
+/* Imagen previa */
 img {
   display: block;
   margin-top: 5px;
   border-radius: 6px;
 }
+
+/* Notificaciones tipo toast */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #a3d2ca;
+  color: #2b2b2b;
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;
+  z-index: 9999;
+}
+
+.toast.error {
+  background: #f8a5a5;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
