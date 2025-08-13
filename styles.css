@@ -1,10 +1,11 @@
 /* Fondo general */
 body {
-  background-color: #fefcfb;
+  background-color: #f8f8f8;
   font-family: 'Segoe UI', sans-serif;
   display: flex;
   justify-content: center;
-  padding: 40px;
+  align-items: center;
+  height: 100vh;
   margin: 0;
 }
 
@@ -13,53 +14,63 @@ body {
   background-color: #ffffff;
   padding: 30px;
   border-radius: 16px;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 800px;
 }
 
 /* Títulos */
 h1 {
-  color: #444;
+  color: #333;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 700;
 }
 
 h2 {
   color: #555;
-  margin-top: 15px;
+  margin-top: 20px;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 /* Tarjetas */
 .card {
-  background-color: #fafafa;
+  background-color: #f9f9f9;
   border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 /* Inputs y selects */
 input, select {
-  padding: 10px;
-  font-size: 15px;
+  padding: 12px;
+  font-size: 16px;
   border: 1px solid #ddd;
-  border-radius: 10px;
+  border-radius: 12px;
   width: 100%;
-  margin-bottom: 10px;
-  background-color: #fefefe;
+  margin-bottom: 15px;
+  background-color: #f1f1f1;
+}
+
+input:focus, select:focus {
+  border-color: #7ed6df;
+  outline: none;
 }
 
 /* Botones */
 button {
-  padding: 10px 15px;
+  padding: 12px 20px;
   background-color: #a3d2ca;
-  color: #2b2b2b;
+  color: #333;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
   transition: background 0.3s;
+  width: 100%;
 }
 
 button:hover {
@@ -70,6 +81,9 @@ button:hover {
 .cerrar-btn {
   background-color: #f8a5a5;
   width: auto;
+  margin-top: 15px;
+  padding: 10px 15px;
+  border-radius: 10px;
 }
 
 .cerrar-btn:hover {
@@ -83,20 +97,22 @@ ul {
 }
 
 ul li {
-  margin: 8px 0;
-  padding: 10px;
-  background-color: #fdf1ec;
-  border-radius: 10px;
+  margin: 12px 0;
+  padding: 15px;
+  background-color: #fef1f1;
+  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }
 
 /* Imagen previa */
 img {
   display: block;
   margin-top: 5px;
-  border-radius: 6px;
+  border-radius: 8px;
+  width: 100%;
 }
 
 /* Notificaciones tipo toast */
@@ -105,12 +121,12 @@ img {
   top: 20px;
   right: 20px;
   background: #a3d2ca;
-  color: #2b2b2b;
-  padding: 12px 18px;
+  color: #333;
+  padding: 14px 20px;
   border-radius: 8px;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   opacity: 0;
-  transform: translateY(-20px);
+  transform: translateY(-25px);
   animation: fadeIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;
   z-index: 9999;
 }
@@ -129,12 +145,16 @@ img {
 @keyframes fadeOut {
   to {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-25px);
   }
 }
+
+/* Botones de acción (editar y eliminar) */
 .btn-editar {
   background-color: #b5ead7;
   margin-left: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
 }
 
 .btn-editar:hover {
@@ -144,42 +164,10 @@ img {
 .btn-eliminar {
   background-color: #ffb3b3;
   margin-left: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
 }
 
 .btn-eliminar:hover {
   background-color: #ff9999;
 }
-
-.toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #b5ead7;
-  color: #2b2b2b;
-  padding: 12px 18px;
-  border-radius: 8px;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
-  opacity: 0;
-  transform: translateY(-20px);
-  animation: fadeIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;
-  z-index: 9999;
-}
-
-.toast.error {
-  background: #ffb3b3;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-}
-
